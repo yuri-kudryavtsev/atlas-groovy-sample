@@ -1,0 +1,103 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'io.qameta.allure:allure-gradle:2.5'
+    }
+}
+
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'io.qameta.allure' version '2.5'
+}
+
+group 'ru.tinkoff.asterisk'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+
+    flatDir{
+        dirs 'libs'
+    }
+}
+
+allure {
+    version = '2.6.0'
+    autoconfigure = true
+    aspectjweaver = true
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.5.2'
+    compile 'io.github.bonigarcia:webdrivermanager:2.2.4'
+
+    // https://mvnrepository.com/artifact/org.testng/testng
+    compile group: 'org.testng', name: 'testng', version: '6.14.3'
+
+    // https://mvnrepository.com/artifact/io.qameta.allure/allure-testng
+    compile group: 'io.qameta.allure', name: 'allure-testng', version: '2.7.0'
+//
+//    // https://mvnrepository.com/artifact/com.epam.jdi/jdi-uitest-web
+//    compile group: 'com.epam.jdi', name: 'jdi-uitest-web', version: '1.1.29'
+
+    // https://mvnrepository.com/artifact/org.aeonbits.owner/owner-java8
+    compile group: 'org.aeonbits.owner', name: 'owner-java8', version: '1.0.10'
+
+    // https://mvnrepository.com/artifact/com.mashape.unirest/unirest-java
+    compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
+
+    // https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
+
+    // https://mvnrepository.com/artifact/org.awaitility/awaitility
+    compile group: 'org.awaitility', name: 'awaitility', version: '3.1.2'
+
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    compile group: 'org.assertj', name: 'assertj-core', version: '3.11.1'
+
+    //LOGGING
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+
+    // https://mvnrepository.com/artifact/org.slf4j/log4j-over-slf4j
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.25'
+
+    // https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'
+
+    // https://mvnrepository.com/artifact/de.huxhorn.lilith/de.huxhorn.lilith.logback.appender.multiplex-classic
+    compile group: 'de.huxhorn.lilith', name: 'de.huxhorn.lilith.logback.appender.multiplex-classic', version: '8.2.0'
+
+    // https://mvnrepository.com/artifact/ru.stqa.selenium/webdriver-logging-wrapper
+    compile group: 'ru.stqa.selenium', name: 'webdriver-logging-wrapper', version: '2.0'
+
+    compile(name:'atlas-core-1.0.0', ext:'jar')
+    compile(name:'atlas-webdriver-1.0.0', ext:'jar')
+
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.14.0'
+}
+
+tasks.withType(Test) {
+    useTestNG() {
+        suiteXmlBuilder().suite(name: 'Yandex', parallel: 'methods', 'thread-count': 1) {
+            test (name : 'Regress', annotations : 'JDK', verbose:'1') {
+                packages {
+                    'package' (name: 'ru.test.yandex.*')
+                }
+            }
+        }
+    }
+    ignoreFailures = true
+}
+
+gradle.startParameter.continueOnFailure = true
